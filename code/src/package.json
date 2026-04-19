@@ -1,0 +1,13 @@
+{
+  "name": "edge-cloud-offloading-project",
+  "version": "1.0.0",
+  "description": "Edge Cloud Task Offloading Simulation Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0"
+  }
+}

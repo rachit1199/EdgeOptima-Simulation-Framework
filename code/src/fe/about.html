@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About — EdgeOptima Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════
+   SHARED BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #ffffff;
+  color: #1c1c1c;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+nav {
+  background: #1c1c2e;
+  border-bottom: 3px solid #c8a84b;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: stretch;
+  padding: 0 2rem;
+}
+.nav-brand {
+  display: flex; align-items: center;
+  padding: 0 2rem 0 0;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  margin-right: 0.5rem;
+}
+.nav-brand-text {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: #c8a84b; letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.nav-brand-sub {
+  font-size: 0.65rem; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+.nav-links {
+  display: flex; list-style: none; flex: 1;
+}
+.nav-links li a {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 1.1rem 1.5rem;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-links li a:hover { color: #fff; border-color: rgba(200,168,75,0.5); }
+.nav-links li a.active { color: #c8a84b; border-color: #c8a84b; }
+.nav-links li a .nav-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.68rem; color: rgba(255,255,255,0.3);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════ */
+.page-header {
+  background: #1c1c2e;
+  padding: 4rem 2rem 3.5rem;
+  color: #fff;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.page-eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: #c8a84b; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.page-eyebrow::before {
+  content: ''; display: block;
+  width: 24px; height: 1px; background: #c8a84b;
+}
+.page-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700; line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.page-subtitle {
+  color: rgba(255,255,255,0.55);
+  font-size: 1rem; max-width: 680px;
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════
+   CONTENT
+═══════════════════════════════════════ */
+.content { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+/* ── SECTION TITLES ── */
+.section-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: #1c1c2e; margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid #1c1c2e;
+}
+.section-body {
+  font-size: 0.93rem; color: #333; line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+.section-body p + p { margin-top: 0.9rem; }
+.section-body strong { color: #1c1c2e; font-weight: 700; }
+
+/* ── HIGHLIGHT BLOCK ── */
+.highlight-block {
+  background: #f8f5ee;
+  border-left: 4px solid #c8a84b;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 0.9rem; color: #444; line-height: 1.8;
+  font-family: 'Libre Baskerville', serif; font-style: italic;
+}
+
+/* ── THREE TIER DIAGRAM ── */
+.tier-diagram {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; margin: 2rem 0;
+  border: 1px solid #ddd;
+}
+.tier-block {
+  padding: 1.75rem 1.5rem;
+  border-right: 1px solid #ddd;
+  transition: background 0.2s;
+}
+.tier-block:last-child { border-right: none; }
+.tier-block:hover { background: #fafafa; }
+.tier-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 2rem; font-weight: 700;
+  color: #e8e0ce; line-height: 1; margin-bottom: 0.5rem;
+}
+.tier-name {
+  font-weight: 700; font-size: 0.95rem;
+  color: #1c1c2e; margin-bottom: 0.5rem;
+}
+.tier-desc { font-size: 0.8rem; color: #666; line-height: 1.7; }
+.tier-badge {
+  display: inline-block; margin-top: 1rem;
+  font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 700; padding: 0.2rem 0.65rem;
+  border: 1px solid; background: transparent;
+}
+.badge-local { color: #1a5fa3; border-color: #1a5fa3; }
+.badge-edge  { color: #a36a00; border-color: #a36a00; }
+.badge-cloud { color: #217a3c; border-color: #217a3c; }
+
+/* ── ALGO TABLE ── */
+.algo-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+.algo-table thead tr { background: #1c1c2e; color: #fff; }
+.algo-table th { padding: 0.7rem 1rem; text-align: left; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.algo-table td { padding: 0.7rem 1rem; border-bottom: 1px solid #eee; color: #333; }
+.algo-table tr:last-child td { border-bottom: none; }
+.algo-table tbody tr:hover td { background: #fafafa; }
+
+/* ── EQUATION BOX ── */
+.equation-box {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 1.25rem 1.75rem;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.9rem; color: #333; line-height: 2;
+  margin: 1.25rem 0;
+}
+.equation-box .eq-main { font-size: 1.05rem; font-weight: 700; color: #1c1c2e; }
+
+/* ── SDG CARDS ── */
+.sdg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1.5rem 0; }
+.sdg-card {
+  border: 1px solid #ddd; padding: 1.5rem;
+  display: flex; gap: 1.25rem; align-items: flex-start;
+  transition: border-color 0.2s;
+}
+.sdg-card:hover { border-color: #c8a84b; }
+.sdg-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 2.5rem; font-weight: 700; line-height: 1;
+  flex-shrink: 0; color: #c8a84b;
+}
+.sdg-title { font-weight: 700; font-size: 0.9rem; color: #1c1c2e; margin-bottom: 0.4rem; }
+.sdg-desc { font-size: 0.8rem; color: #666; line-height: 1.7; }
+
+/* ── REFERENCE BOX ── */
+.ref-box {
+  background: #f8f8f8; border: 1px solid #e0e0e0;
+  padding: 1.25rem 1.5rem; margin-top: 1rem;
+  font-size: 0.8rem; color: #555; line-height: 1.8;
+}
+.ref-box p { margin-bottom: 0.4rem; }
+.ref-box p:last-child { margin-bottom: 0; }
+
+/* ── CTA BUTTON ── */
+.cta-row { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.8rem 1.75rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  text-decoration: none; border: 2px solid;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.btn-primary { background: #1c1c2e; color: #fff; border-color: #1c1c2e; }
+.btn-primary:hover { background: #2d2d5e; border-color: #2d2d5e; }
+.btn-secondary { background: transparent; color: #1c1c2e; border-color: #1c1c2e; }
+.btn-secondary:hover { background: #1c1c2e; color: #fff; }
+
+/* ── GRID SPLITS ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+
+/* ── STAT BOXES ── */
+.stat-boxes { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #ddd; border: 1px solid #ddd; margin: 1.5rem 0; }
+.stat-box { background: #fff; padding: 1.25rem 1rem; text-align: center; }
+.stat-box-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.8rem; font-weight: 700; color: #1c1c2e; line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-box-label { font-size: 0.7rem; color: #888; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ── FOOTER ── */
+footer {
+  background: #1c1c2e; color: rgba(255,255,255,0.4);
+  border-top: 3px solid #c8a84b;
+  padding: 1.5rem 2rem;
+  font-size: 0.72rem; text-align: center; letter-spacing: 0.04em;
+}
+footer span { color: #c8a84b; }
+
+/* ── DIVIDER ── */
+hr { border: none; border-top: 1px solid #e8e8e8; margin: 2.5rem 0; }
+
+@media (max-width: 800px) {
+  .tier-diagram { grid-template-columns: 1fr; }
+  .tier-block { border-right: none; border-bottom: 1px solid #ddd; }
+  .two-col, .sdg-row, .three-col { grid-template-columns: 1fr; }
+  .stat-boxes { grid-template-columns: 1fr 1fr; }
+  .nav-inner { padding: 0 1rem; }
+  .nav-links li a { padding: 1rem 0.9rem; font-size: 0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div>
+        <div class="nav-brand-text">EdgeOptima</div>
+        <div class="nav-brand-sub">Simulation Framework</div>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="about.html" class="active"><span class="nav-num">01</span> About</a></li>
+      <li><a href="inputs.html"><span class="nav-num">02</span> Configure &amp; Simulate</a></li>
+      <li><a href="outputs.html"><span class="nav-num">03</span> Results &amp; Analysis</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════════ PAGE HEADER ═══════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Research Overview</div>
+    <h1 class="page-title">Energy-Efficient Task Offloading<br/>in Edge–Cloud Environments</h1>
+    <p class="page-subtitle">A three-tier cooperative simulation framework for intelligent computational task distribution across local devices, edge nodes, and cloud servers — minimising total energy while preserving Quality of Service.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ CONTENT ═══════════════════ -->
+<div class="content">
+
+  <!-- KPI summary -->
+  <div class="stat-boxes">
+    <div class="stat-box"><div class="stat-box-num">3</div><div class="stat-box-label">Compute Tiers</div></div>
+    <div class="stat-box"><div class="stat-box-num">6</div><div class="stat-box-label">Algorithms Compared</div></div>
+    <div class="stat-box"><div class="stat-box-num">8</div><div class="stat-box-label">Output Charts</div></div>
+    <div class="stat-box"><div class="stat-box-num">2</div><div class="stat-box-label">UN SDGs Addressed</div></div>
+  </div>
+
+  <!-- 1. Problem Statement -->
+  <h2 class="section-title">1. Problem Statement</h2>
+  <div class="section-body">
+    <p>The proliferation of smart devices, IoT sensors, and data-driven applications has led to an exponential increase in computational demand at the network edge. Traditional cloud computing architectures, though powerful, suffer from <strong>high latency and energy consumption</strong> due to their centralised nature. For real-time applications — autonomous vehicles, industrial IoT, augmented reality — round-trip latency to a remote data centre is simply unacceptable.</p>
+    <p>At the same time, executing all tasks locally on constrained devices drains batteries rapidly. Neither extreme — full local execution nor full cloud offloading — is optimal. What is required is an intelligent, dynamic decision for every incoming task: <em>should this task execute locally, be offloaded to a nearby edge server, or be sent to the cloud?</em></p>
+    <div class="highlight-block">
+      "The core challenge is the energy–latency trade-off: offloading reduces local energy consumption but incurs transmission cost and delay. The optimal decision depends on task characteristics, network conditions, server load, and application deadlines — simultaneously."
+    </div>
+    <p>This simulator models exactly this decision problem and allows researchers and engineers to explore how different algorithm choices and infrastructure configurations affect total system energy and QoS compliance.</p>
+  </div>
+
+  <!-- 2. Framework -->
+  <h2 class="section-title">2. Three-Tier Cooperative Architecture</h2>
+  <div class="section-body">
+    <p>This project extends the cooperative offloading model proposed by <strong>Long et al. (2018)</strong> by incorporating dynamic decision-making and adaptive resource allocation across three computational tiers.</p>
+  </div>
+  <div class="tier-diagram">
+    <div class="tier-block">
+      <div class="tier-num">01</div>
+      <div class="tier-name">Local Device Execution</div>
+      <div class="tier-desc">Tasks are executed directly on the IoT device or mobile terminal. No transmission cost, but limited CPU capacity leads to high execution energy for complex tasks. Suitable for lightweight, privacy-sensitive workloads.</div>
+      <span class="tier-badge badge-local">Tier 1 — Device</span>
+    </div>
+    <div class="tier-block">
+      <div class="tier-num">02</div>
+      <div class="tier-name">Edge Server Offloading</div>
+      <div class="tier-desc">Tasks are offloaded to a nearby Mobile Edge Computing (MEC) server, typically co-located with a cellular base station. Offers low transmission latency and high compute capacity. Optimal for delay-sensitive, mid-complexity tasks.</div>
+      <span class="tier-badge badge-edge">Tier 2 — Edge</span>
+    </div>
+    <div class="tier-block">
+      <div class="tier-num">03</div>
+      <div class="tier-name">Cloud Server Offloading</div>
+      <div class="tier-desc">Tasks are routed through the edge to a remote cloud data centre. Virtually unlimited compute capacity, but higher end-to-end latency due to two transmission hops. Best suited for computationally intensive, deadline-tolerant workloads.</div>
+      <span class="tier-badge badge-cloud">Tier 3 — Cloud</span>
+    </div>
+  </div>
+  <div class="section-body">
+    <p>Each task is independently assigned to a tier based on its data size, computational complexity, and latency deadline. The assignment algorithm evaluates the <strong>weighted objective function</strong> across all three tiers and selects the assignment that minimises total cost.</p>
+  </div>
+
+  <!-- 3. Objective Function -->
+  <h2 class="section-title">3. Objective Function &amp; Energy Model</h2>
+  <div class="section-body">
+    <p>The optimisation objective balances total system energy and end-to-end task latency, subject to per-task deadline constraints. The objective function is defined as follows:</p>
+    <div class="equation-box">
+      <div class="eq-main">minimise F(x) = w<sub>e</sub> · E<sub>total</sub> + w<sub>l</sub> · T<sub>total</sub></div>
+      subject to: T<sub>i</sub> ≤ D<sub>i</sub> &nbsp;∀ i ∈ Tasks &nbsp;&nbsp;|&nbsp;&nbsp; w<sub>e</sub> + w<sub>l</sub> = 1<br/>
+      where: E<sub>total</sub> = Σ ( E<sub>tx,i</sub> + E<sub>exec,i</sub> ) &nbsp;across all assigned tiers<br/>
+      E<sub>tx,i</sub> = P<sub>tx</sub> · t<sub>tx,i</sub> &nbsp;&nbsp;|&nbsp;&nbsp; E<sub>exec,i</sub> = P<sub>exec,tier</sub> · t<sub>exec,i</sub>
+    </div>
+    <p>Here, <strong>w<sub>e</sub></strong> and <strong>w<sub>l</sub></strong> are user-configurable weights controlling the trade-off between energy efficiency and latency minimisation. The default configuration is <strong>w<sub>e</sub> = 0.60</strong> and <strong>w<sub>l</sub> = 0.40</strong>, reflecting a bias toward energy efficiency.</p>
+    <p>Transmission time is derived from task data size and the available bandwidth on each hop (Local→Edge and Edge→Cloud), while execution time is computed from task complexity (MFLOPS) divided by server processing capacity.</p>
+  </div>
+
+  <!-- 4. Algorithms -->
+  <h2 class="section-title">4. Optimisation Algorithms</h2>
+  <div class="section-body">
+    <p>The simulator implements six offloading strategies, ranging from simple baselines to heuristic and learning-based approaches, allowing direct comparative analysis.</p>
+  </div>
+  <table class="algo-table">
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Complexity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Greedy</strong></td>
+        <td>Heuristic</td>
+        <td>Assigns each task to the tier with the lowest immediate objective cost. Fast, deterministic, but may miss global optima.</td>
+        <td>O(n)</td>
+      </tr>
+      <tr>
+        <td><strong>Simulated Annealing</strong></td>
+        <td>Meta-heuristic</td>
+        <td>Probabilistic search that accepts worse solutions at high temperature to escape local optima. Converges to near-optimal solutions over iterations.</td>
+        <td>O(n · iter)</td>
+      </tr>
+      <tr>
+        <td><strong>Deep RL (DQN)</strong></td>
+        <td>Learning-based</td>
+        <td>A Deep Q-Network agent trained on task profiles. Refines greedy decisions via policy learning, achieving the best average performance across heterogeneous workloads.</td>
+        <td>O(n)</td>
+      </tr>
+      <tr>
+        <td><strong>Round Robin</strong></td>
+        <td>Baseline</td>
+        <td>Cycles tasks sequentially across the three tiers regardless of task characteristics. Used as a load-balancing baseline.</td>
+        <td>O(n)</td>
+      </tr>
+      <tr>
+        <td><strong>Local Only</strong></td>
+        <td>Baseline</td>
+        <td>All tasks execute on the local device. Represents the worst-case energy scenario for complex tasks, but zero transmission overhead.</td>
+        <td>O(1)</td>
+      </tr>
+      <tr>
+        <td><strong>Cloud Only</strong></td>
+        <td>Baseline</td>
+        <td>All tasks are offloaded to the cloud. Minimises device energy but maximises latency due to two-hop transmission.</td>
+        <td>O(1)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 5. SDG -->
+  <h2 class="section-title">5. Alignment with UN Sustainable Development Goals</h2>
+  <div class="section-body">
+    <p>This research directly contributes to two of the United Nations Sustainable Development Goals by promoting energy-aware, intelligent computing infrastructure at the network edge.</p>
+  </div>
+  <div class="sdg-row">
+    <div class="sdg-card">
+      <div class="sdg-num">7</div>
+      <div>
+        <div class="sdg-title">Affordable and Clean Energy</div>
+        <div class="sdg-desc">By minimising redundant computation and optimising task placement, the framework reduces total energy consumption across distributed IoT ecosystems. Intelligent offloading directly lowers the carbon footprint of edge computing infrastructure, contributing to cleaner, more sustainable digital systems.</div>
+      </div>
+    </div>
+    <div class="sdg-card">
+      <div class="sdg-num">9</div>
+      <div>
+        <div class="sdg-title">Industry, Innovation &amp; Infrastructure</div>
+        <div class="sdg-desc">EdgeOptima promotes next-generation resilient digital infrastructure through adaptive edge–cloud collaboration. It enables intelligent, scalable computing at the network edge for modern industrial, civic, and consumer applications — fostering innovation in distributed systems design.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. References -->
+  <h2 class="section-title">6. Base Paper &amp; References</h2>
+  <div class="section-body">
+    <p>This work builds upon and extends the following foundational research:</p>
+    <div class="ref-box">
+      <p><strong>[1]</strong> Long, C., Cao, Y., Jiang, T., &amp; Zhang, Q. (2018). <em>Edge Computing Framework for Cooperative Video Processing in Multimedia IoT Systems.</em> IEEE Transactions on Multimedia, 20(5), 1126–1139.</p>
+      <p><strong>[2]</strong> Mao, Y., Zhang, J., &amp; Letaief, K. B. (2017). <em>Dynamic Computation Offloading for Mobile-Edge Computing with Energy Harvesting Devices.</em> IEEE Journal on Selected Areas in Communications, 34(12), 3590–3605.</p>
+      <p><strong>[3]</strong> Shi, W., Cao, J., Zhang, Q., Li, Y., &amp; Xu, L. (2016). <em>Edge Computing: Vision and Challenges.</em> IEEE Internet of Things Journal, 3(5), 637–646.</p>
+      <p><strong>[4]</strong> Chen, X., Jiao, L., Li, W., &amp; Fu, X. (2016). <em>Efficient Multi-User Computation Offloading for Mobile-Edge Cloud Computing.</em> IEEE/ACM Transactions on Networking, 24(5), 2795–2808.</p>
+    </div>
+  </div>
+
+  <hr/>
+
+  <div class="cta-row">
+    <a href="inputs.html" class="btn btn-primary">Configure Simulation →</a>
+    <a href="outputs.html" class="btn btn-secondary">View Sample Results</a>
+  </div>
+
+</div>
+
+<footer>
+  EdgeOptima — Energy-Efficient Task Offloading &amp; Resource Optimization in Edge–Cloud Environments &nbsp;|&nbsp;
+  Based on <span>Long et al. (2018)</span> &nbsp;|&nbsp; Research Simulation Framework
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Configure — EdgeOptima Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #ffffff;
+  color: #1c1c1c;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+nav {
+  background: #1c1c2e;
+  border-bottom: 3px solid #c8a84b;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: stretch;
+  padding: 0 2rem;
+}
+.nav-brand {
+  display: flex; align-items: center;
+  padding: 0 2rem 0 0;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  margin-right: 0.5rem;
+}
+.nav-brand-text {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: #c8a84b; letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.nav-brand-sub {
+  font-size: 0.65rem; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+.nav-links { display: flex; list-style: none; flex: 1; }
+.nav-links li a {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 1.1rem 1.5rem;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-links li a:hover { color: #fff; border-color: rgba(200,168,75,0.5); }
+.nav-links li a.active { color: #c8a84b; border-color: #c8a84b; }
+.nav-links li a .nav-num { font-family: 'Libre Baskerville', serif; font-size: 0.68rem; color: rgba(255,255,255,0.3); font-style: italic; }
+
+.page-header {
+  background: #1c1c2e;
+  padding: 3.5rem 2rem 3rem;
+  color: #fff;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.page-eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: #c8a84b; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.page-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: #c8a84b; }
+.page-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 700; line-height: 1.2; margin-bottom: 0.75rem;
+}
+.page-subtitle { color: rgba(255,255,255,0.55); font-size: 0.95rem; max-width: 620px; }
+
+/* ═══ LAYOUT ═══ */
+.content { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+/* ═══ PANEL ═══ */
+.panel { border: 1px solid #d8d8d8; }
+.panel-head {
+  background: #1c1c2e; color: #fff;
+  padding: 0.65rem 1.1rem;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.panel-head .ph-num {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic; font-size: 0.9rem;
+  color: #c8a84b; font-weight: 400;
+}
+.panel-body { padding: 1.25rem; }
+
+/* ═══ FIELDS ═══ */
+.field { margin-bottom: 1.1rem; }
+.field:last-child { margin-bottom: 0; }
+label {
+  display: block; font-size: 0.8rem; font-weight: 700;
+  color: #1c1c2e; margin-bottom: 0.25rem;
+}
+.field-note { font-size: 0.7rem; color: #999; margin-bottom: 0.35rem; display: block; }
+
+input[type=number], select {
+  width: 100%;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem;
+  border: 1px solid #c5c5c5; padding: 0.5rem 0.75rem;
+  background: #fafafa; color: #1c1c1c;
+  outline: none; transition: border-color 0.15s, background 0.15s;
+  -moz-appearance: textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type=number]:focus, select:focus { border-color: #1c1c2e; background: #fff; }
+
+.range-wrap { margin-top: 0.1rem; }
+.range-row { display: flex; align-items: center; gap: 0.75rem; }
+input[type=range] {
+  flex: 1; accent-color: #1c1c2e; cursor: pointer;
+  height: 3px;
+}
+.range-val {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.82rem; font-weight: 700; color: #1c1c2e;
+  min-width: 72px; text-align: right;
+}
+.range-minmax {
+  display: flex; justify-content: space-between;
+  font-size: 0.62rem; color: #bbb; margin-top: 0.15rem;
+}
+
+/* Weight pair */
+.weight-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.weight-box {
+  background: #f5f5f5; border: 1px solid #e0e0e0;
+  padding: 0.75rem; text-align: center;
+}
+.weight-label { font-size: 0.68rem; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.3rem; }
+.weight-value {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.5rem; font-weight: 700; color: #1c1c2e;
+}
+.weight-desc { font-size: 0.65rem; color: #aaa; margin-top: 0.2rem; }
+
+/* Divider inside panel */
+.panel-divider { border: none; border-top: 1px solid #ebebeb; margin: 1rem 0; }
+
+/* ═══ SUMMARY COLUMN ═══ */
+.summary-col { grid-column: span 3; }
+.summary-panel { border: 1px solid #d8d8d8; }
+.summary-grid {
+  display: grid; grid-template-columns: repeat(6,1fr);
+  gap: 0; border-top: 1px solid #e8e8e8;
+}
+.summary-cell {
+  padding: 1rem 1.1rem;
+  border-right: 1px solid #e8e8e8;
+  font-size: 0.78rem;
+}
+.summary-cell:last-child { border-right: none; }
+.summary-cell-label { font-size: 0.65rem; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.3rem; }
+.summary-cell-val { font-family: 'Libre Baskerville', serif; font-weight: 700; font-size: 1.1rem; color: #1c1c2e; }
+
+/* ═══ BUTTONS ═══ */
+.btn-row { display: flex; gap: 1rem; margin-top: 0; flex-wrap: wrap; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.8rem 1.75rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  text-decoration: none; border: 2px solid;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.btn-run { background: #1c1c2e; color: #fff; border-color: #1c1c2e; font-size: 0.88rem; padding: 0.9rem 2.5rem; }
+.btn-run:hover { background: #2d2d5e; border-color: #2d2d5e; }
+.btn-reset { background: transparent; color: #888; border-color: #c5c5c5; }
+.btn-reset:hover { border-color: #888; color: #333; }
+.btn-results { background: transparent; color: #1c1c2e; border-color: #1c1c2e; }
+.btn-results:hover { background: #1c1c2e; color: #fff; }
+.saved-msg { font-size: 0.78rem; color: #217a3c; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+.saved-msg.show { opacity: 1; }
+
+/* ═══ SECTION LABEL ═══ */
+.section-sep {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #aaa; margin: 2rem 0 1rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ebebeb; font-weight: 700;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.section-sep::before { content: attr(data-n); font-family: 'Libre Baskerville', serif; font-style: italic; color: #c8a84b; font-size: 0.9rem; letter-spacing: 0; }
+
+/* ═══ INFO TOOLTIP ═══ */
+.info { display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+  background: #e0e0e0; color: #888; font-size: 0.6rem; font-weight: 700;
+  text-align: center; line-height: 14px; cursor: default; margin-left: 0.3rem;
+  vertical-align: middle; position: relative; }
+.info:hover::after {
+  content: attr(data-tip);
+  position: absolute; left: 18px; top: -4px;
+  background: #1c1c2e; color: #fff;
+  font-size: 0.68rem; padding: 0.4rem 0.7rem;
+  white-space: nowrap; z-index: 10; pointer-events: none;
+  font-family: 'Source Sans 3', sans-serif; font-weight: 400;
+}
+
+footer {
+  background: #1c1c2e; color: rgba(255,255,255,0.4);
+  border-top: 3px solid #c8a84b;
+  padding: 1.5rem 2rem;
+  font-size: 0.72rem; text-align: center; letter-spacing: 0.04em;
+}
+footer span { color: #c8a84b; }
+
+@media (max-width: 960px) {
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .summary-col { grid-column: span 2; }
+  .summary-grid { grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .summary-col { grid-column: span 1; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .nav-inner { padding: 0 1rem; }
+  .nav-links li a { padding: 1rem 0.75rem; font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div>
+        <div class="nav-brand-text">EdgeOptima</div>
+        <div class="nav-brand-sub">Simulation Framework</div>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="about.html"><span class="nav-num">01</span> About</a></li>
+      <li><a href="inputs.html" class="active"><span class="nav-num">02</span> Configure &amp; Simulate</a></li>
+      <li><a href="outputs.html"><span class="nav-num">03</span> Results &amp; Analysis</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Simulation Configuration</div>
+    <h1 class="page-title">Configure Parameters &amp; Run Simulation</h1>
+    <p class="page-subtitle">Adjust all system parameters below. Changes are reflected immediately in the live configuration summary. Press <em>Run Simulation</em> to compute results and proceed to the analysis page.</p>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="section-sep" data-n="A">Task &amp; Device Configuration</div>
+  <div class="form-grid">
+
+    <!-- PANEL 1: Task -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">1</span> Task Properties</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Number of Tasks <span class="info" data-tip="Total computational tasks generated across all devices">?</span></label>
+          <span class="field-note">Range: 1 – 200 tasks</span>
+          <input type="number" id="numTasks" value="20" min="1" max="200"/>
+        </div>
+        <div class="field">
+          <label>Average Task Data Size (MB)</label>
+          <span class="field-note">Mean payload size per task; individual tasks vary ±50%</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="taskSize" min="0.1" max="50" step="0.1" value="2"/>
+              <span class="range-val" id="taskSizeVal">2.0 MB</span>
+            </div>
+            <div class="range-minmax"><span>0.1 MB</span><span>50 MB</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Task Complexity (MFLOPS) <span class="info" data-tip="Millions of floating-point operations per task">?</span></label>
+          <span class="field-note">Computational demand per task</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="taskComplexity" min="10" max="2000" step="10" value="200"/>
+              <span class="range-val" id="taskComplexityVal">200 MFLOPS</span>
+            </div>
+            <div class="range-minmax"><span>10</span><span>2000</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Task Deadline (ms) <span class="info" data-tip="Maximum acceptable end-to-end latency; tasks exceeding this fail QoS">?</span></label>
+          <span class="field-note">QoS latency constraint per task</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="maxDeadline" min="50" max="5000" step="50" value="500"/>
+              <span class="range-val" id="maxDeadlineVal">500 ms</span>
+            </div>
+            <div class="range-minmax"><span>50 ms</span><span>5000 ms</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: Devices -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">2</span> Device &amp; Server Counts</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Number of Devices</label>
+          <span class="field-note">IoT / mobile terminals generating tasks (1 – 50)</span>
+          <input type="number" id="numDevices" value="5" min="1" max="50"/>
+        </div>
+        <div class="field">
+          <label>Number of Edge Servers</label>
+          <span class="field-note">MEC servers available at the edge tier (1 – 20)</span>
+          <input type="number" id="numEdgeServers" value="3" min="1" max="20"/>
+        </div>
+        <div class="field">
+          <label>Number of Cloud Servers</label>
+          <span class="field-note">Cloud data centre nodes (1 – 20)</span>
+          <input type="number" id="numCloudServers" value="2" min="1" max="20"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: Algorithm -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">3</span> Offloading Algorithm</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Algorithm Selection</label>
+          <span class="field-note">Strategy used to assign tasks to execution tiers</span>
+          <select id="algorithm">
+            <option value="greedy">Greedy — Lowest Immediate Cost</option>
+            <option value="sa" selected>Simulated Annealing</option>
+            <option value="drl">Deep Reinforcement Learning (DQL)</option>
+            <option value="roundrobin">Round Robin (Baseline)</option>
+            <option value="localonly">Local Execution Only</option>
+            <option value="cloudonly">Cloud Execution Only</option>
+          </select>
+        </div>
+        <hr class="panel-divider"/>
+        <div class="field">
+          <label>SA Initial Temperature <span class="info" data-tip="Controls initial exploration range in Simulated Annealing">?</span></label>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="saTemp" min="100" max="5000" step="100" value="1000"/>
+              <span class="range-val" id="saTempVal">1000</span>
+            </div>
+            <div class="range-minmax"><span>100</span><span>5000</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>SA Cooling Rate <span class="info" data-tip="Fraction by which temperature decreases each iteration (0.80–0.99)">?</span></label>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="saCooling" min="0.80" max="0.99" step="0.01" value="0.95"/>
+              <span class="range-val" id="saCoolingVal">0.95</span>
+            </div>
+            <div class="range-minmax"><span>0.80</span><span>0.99</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-sep" data-n="B">Processing Capacity</div>
+  <div class="form-grid">
+
+    <!-- PANEL 4: Local CPU -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">4</span> Local Device CPU</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Processing Capacity (MFLOPS)</label>
+          <span class="field-note">Per-device computational capability</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="localCPU" min="50" max="1000" step="10" value="200"/>
+              <span class="range-val" id="localCPUVal">200 MFLOPS</span>
+            </div>
+            <div class="range-minmax"><span>50</span><span>1000</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Local Execution Power (W)</label>
+          <span class="field-note">Device power draw during task execution</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="localExecPower" min="0.5" max="10" step="0.1" value="2.5"/>
+              <span class="range-val" id="localExecPowerVal">2.5 W</span>
+            </div>
+            <div class="range-minmax"><span>0.5 W</span><span>10 W</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Transmission Power (W)</label>
+          <span class="field-note">Device radio transmission power</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="devicePower" min="0.1" max="5" step="0.1" value="1.0"/>
+              <span class="range-val" id="devicePowerVal">1.0 W</span>
+            </div>
+            <div class="range-minmax"><span>0.1 W</span><span>5 W</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 5: Edge -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">5</span> Edge Server</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Processing Capacity per Server (MFLOPS)</label>
+          <span class="field-note">Total effective = capacity × number of servers</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="edgeCPU" min="500" max="10000" step="100" value="2000"/>
+              <span class="range-val" id="edgeCPUVal">2000 MFLOPS</span>
+            </div>
+            <div class="range-minmax"><span>500</span><span>10000</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Edge Server Execution Power (W)</label>
+          <span class="field-note">Power draw of a single edge MEC node</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="edgeExecPower" min="50" max="500" step="10" value="150"/>
+              <span class="range-val" id="edgeExecPowerVal">150 W</span>
+            </div>
+            <div class="range-minmax"><span>50 W</span><span>500 W</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 6: Cloud -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">6</span> Cloud Server</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Processing Capacity per Server (MFLOPS)</label>
+          <span class="field-note">Total effective = capacity × number of cloud servers</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="cloudCPU" min="5000" max="100000" step="500" value="20000"/>
+              <span class="range-val" id="cloudCPUVal">20000 MFLOPS</span>
+            </div>
+            <div class="range-minmax"><span>5000</span><span>100000</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cloud Server Execution Power (W)</label>
+          <span class="field-note">Power draw of a single cloud compute node</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="cloudExecPower" min="200" max="2000" step="50" value="500"/>
+              <span class="range-val" id="cloudExecPowerVal">500 W</span>
+            </div>
+            <div class="range-minmax"><span>200 W</span><span>2000 W</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-sep" data-n="C">Network &amp; Optimisation Parameters</div>
+  <div class="form-grid">
+
+    <!-- PANEL 7: Network -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">7</span> Network Bandwidth</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Local → Edge Bandwidth (Mbps)</label>
+          <span class="field-note">Data transmission rate from device to edge server</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="bwLocalEdge" min="1" max="300" step="1" value="50"/>
+              <span class="range-val" id="bwLocalEdgeVal">50 Mbps</span>
+            </div>
+            <div class="range-minmax"><span>1 Mbps</span><span>300 Mbps</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Edge → Cloud Bandwidth (Mbps)</label>
+          <span class="field-note">Backhaul rate from edge server to cloud</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="bwEdgeCloud" min="10" max="1000" step="10" value="100"/>
+              <span class="range-val" id="bwEdgeCloudVal">100 Mbps</span>
+            </div>
+            <div class="range-minmax"><span>10 Mbps</span><span>1000 Mbps</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Edge Propagation Delay (ms)</label>
+          <span class="field-note">Round-trip propagation overhead to edge</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="propagationDelay" min="1" max="50" step="1" value="5"/>
+              <span class="range-val" id="propagationDelayVal">5 ms</span>
+            </div>
+            <div class="range-minmax"><span>1 ms</span><span>50 ms</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cloud Propagation Delay (ms)</label>
+          <span class="field-note">Additional delay for cloud hop (edge → cloud)</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="cloudDelay" min="10" max="200" step="5" value="50"/>
+              <span class="range-val" id="cloudDelayVal">50 ms</span>
+            </div>
+            <div class="range-minmax"><span>10 ms</span><span>200 ms</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 8: Weights -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">8</span> Optimisation Weights</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Energy Weight (w<sub>e</sub>)</label>
+          <span class="field-note">Balance between energy efficiency and latency; w<sub>e</sub> + w<sub>l</sub> = 1.0</span>
+          <div class="range-wrap">
+            <div class="range-row">
+              <input type="range" id="weightEnergy" min="0" max="1" step="0.01" value="0.60"/>
+              <span class="range-val" id="weightEnergyVal">0.60</span>
+            </div>
+            <div class="range-minmax"><span>0.00</span><span>1.00</span></div>
+          </div>
+        </div>
+        <hr class="panel-divider"/>
+        <div class="field">
+          <label>Current Weight Distribution</label>
+          <span class="field-note">Live display of the energy/latency trade-off split</span>
+          <div class="weight-pair">
+            <div class="weight-box">
+              <div class="weight-label">Energy (w<sub>e</sub>)</div>
+              <div class="weight-value" id="wEDisp">0.60</div>
+              <div class="weight-desc">efficiency</div>
+            </div>
+            <div class="weight-box">
+              <div class="weight-label">Latency (w<sub>l</sub>)</div>
+              <div class="weight-value" id="wLDisp">0.40</div>
+              <div class="weight-desc">responsiveness</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 9: Objective -->
+    <div class="panel">
+      <div class="panel-head"><span class="ph-num">9</span> Objective Function Reference</div>
+      <div class="panel-body">
+        <div style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:0.85rem;color:#444;line-height:2.1;background:#f8f5ee;border-left:3px solid #c8a84b;padding:1rem 1.1rem;">
+          <strong style="font-style:normal;color:#1c1c2e;">min F(x)</strong> = w<sub>e</sub> · E<sub>total</sub> + w<sub>l</sub> · T<sub>total</sub><br/>
+          s.t. T<sub>i</sub> ≤ D<sub>i</sub> &nbsp;∀ i ∈ {1…N}<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp; w<sub>e</sub> + w<sub>l</sub> = 1<br/><br/>
+          E<sub>total</sub> = Σ<sub>i</sub> ( E<sub>tx,i</sub> + E<sub>exec,i</sub> )<br/>
+          E<sub>tx</sub> = P<sub>tx</sub> · (data / BW + prop)<br/>
+          E<sub>exec</sub> = P<sub>exec</sub> · (MFLOPS / CPU)
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIVE SUMMARY -->
+  <div class="section-sep" data-n="—">Live Configuration Summary</div>
+  <div class="panel summary-col">
+    <div class="panel-head">Current Parameter Snapshot</div>
+    <div class="summary-grid">
+      <div class="summary-cell"><div class="summary-cell-label">Tasks</div><div class="summary-cell-val" id="sumTasks">20</div></div>
+      <div class="summary-cell"><div class="summary-cell-label">Devices</div><div class="summary-cell-val" id="sumDevices">5</div></div>
+      <div class="summary-cell"><div class="summary-cell-label">Algorithm</div><div class="summary-cell-val" id="sumAlgo">SA</div></div>
+      <div class="summary-cell"><div class="summary-cell-label">BW L→E</div><div class="summary-cell-val" id="sumBwLE">50 Mbps</div></div>
+      <div class="summary-cell"><div class="summary-cell-label">BW E→C</div><div class="summary-cell-val" id="sumBwEC">100 Mbps</div></div>
+      <div class="summary-cell"><div class="summary-cell-label">Weights</div><div class="summary-cell-val" id="sumWeights">0.60 / 0.40</div></div>
+    </div>
+  </div>
+
+  <!-- RUN BUTTONS -->
+  <div style="margin-top:1.75rem;">
+    <div class="btn-row">
+      <button class="btn btn-run" onclick="runAndNavigate()">▶ Run Simulation &amp; View Results</button>
+      <button class="btn btn-reset" onclick="resetDefaults()">↺ Reset Defaults</button>
+      <a href="outputs.html" class="btn btn-results">View Last Results →</a>
+      <span class="saved-msg" id="savedMsg">✓ Parameters saved. Redirecting to results…</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  EdgeOptima — Energy-Efficient Task Offloading &amp; Resource Optimization in Edge–Cloud Environments &nbsp;|&nbsp;
+  Based on <span>Long et al. (2018)</span> &nbsp;|&nbsp; Research Simulation Framework
+</footer>
+
+<script>
+const ALGO_LABELS = { greedy:'Greedy', sa:'Sim. Annealing', drl:'Deep RL', roundrobin:'Round Robin', localonly:'Local Only', cloudonly:'Cloud Only' };
+
+const rangeBindings = [
+  ['taskSize','taskSizeVal', v=>`${parseFloat(v).toFixed(1)} MB`],
+  ['taskComplexity','taskComplexityVal', v=>`${v} MFLOPS`],
+  ['maxDeadline','maxDeadlineVal', v=>`${v} ms`],
+  ['localCPU','localCPUVal', v=>`${v} MFLOPS`],
+  ['edgeCPU','edgeCPUVal', v=>`${v} MFLOPS`],
+  ['cloudCPU','cloudCPUVal', v=>`${v} MFLOPS`],
+  ['bwLocalEdge','bwLocalEdgeVal', v=>`${v} Mbps`],
+  ['bwEdgeCloud','bwEdgeCloudVal', v=>`${v} Mbps`],
+  ['propagationDelay','propagationDelayVal', v=>`${v} ms`],
+  ['cloudDelay','cloudDelayVal', v=>`${v} ms`],
+  ['devicePower','devicePowerVal', v=>`${parseFloat(v).toFixed(1)} W`],
+  ['localExecPower','localExecPowerVal', v=>`${parseFloat(v).toFixed(1)} W`],
+  ['edgeExecPower','edgeExecPowerVal', v=>`${v} W`],
+  ['cloudExecPower','cloudExecPowerVal', v=>`${v} W`],
+  ['saTemp','saTempVal', v=>`${v}`],
+  ['saCooling','saCoolingVal', v=>`${parseFloat(v).toFixed(2)}`],
+];
+
+rangeBindings.forEach(([id, dispId, fmt]) => {
+  const el = document.getElementById(id);
+  const disp = document.getElementById(dispId);
+  if (!el || !disp) return;
+  el.addEventListener('input', () => { disp.textContent = fmt(el.value); updateSummary(); });
+});
+
+document.getElementById('weightEnergy').addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  document.getElementById('weightEnergyVal').textContent = v.toFixed(2);
+  document.getElementById('wEDisp').textContent = v.toFixed(2);
+  document.getElementById('wLDisp').textContent = (1-v).toFixed(2);
+  updateSummary();
+});
+
+['numTasks','numDevices','numEdgeServers','numCloudServers','algorithm'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) { el.addEventListener('change', updateSummary); el.addEventListener('input', updateSummary); }
+});
+
+function updateSummary() {
+  document.getElementById('sumTasks').textContent = document.getElementById('numTasks').value;
+  document.getElementById('sumDevices').textContent = document.getElementById('numDevices').value;
+  const algo = document.getElementById('algorithm').value;
+  document.getElementById('sumAlgo').textContent = ALGO_LABELS[algo] || algo;
+  document.getElementById('sumBwLE').textContent = document.getElementById('bwLocalEdge').value + ' Mbps';
+  document.getElementById('sumBwEC').textContent = document.getElementById('bwEdgeCloud').value + ' Mbps';
+  const we = parseFloat(document.getElementById('weightEnergy').value).toFixed(2);
+  const wl = (1 - parseFloat(we)).toFixed(2);
+  document.getElementById('sumWeights').textContent = `${we} / ${wl}`;
+}
+
+function collectParams() {
+  const ids = ['numTasks','numDevices','numEdgeServers','numCloudServers','algorithm',
+    'taskSize','taskComplexity','maxDeadline','localCPU','edgeCPU','cloudCPU',
+    'bwLocalEdge','bwEdgeCloud','propagationDelay','cloudDelay',
+    'devicePower','localExecPower','edgeExecPower','cloudExecPower',
+    'weightEnergy','saTemp','saCooling'];
+  const params = {};
+  ids.forEach(id => { params[id] = document.getElementById(id).value; });
+  return params;
+}
+
+function runAndNavigate() {
+  const params = collectParams();
+  localStorage.setItem('edgeOptParams', JSON.stringify(params));
+  const msg = document.getElementById('savedMsg');
+  msg.classList.add('show');
+  setTimeout(() => { window.location.href = 'outputs.html'; }, 800);
+}
+
+function resetDefaults() {
+  const defaults = {
+    numTasks:20, numDevices:5, numEdgeServers:3, numCloudServers:2,
+    taskSize:2, taskComplexity:200, maxDeadline:500,
+    localCPU:200, edgeCPU:2000, cloudCPU:20000,
+    bwLocalEdge:50, bwEdgeCloud:100, propagationDelay:5, cloudDelay:50,
+    devicePower:1.0, localExecPower:2.5, edgeExecPower:150, cloudExecPower:500,
+    weightEnergy:0.60, saTemp:1000, saCooling:0.95,
+  };
+  Object.entries(defaults).forEach(([k,v]) => {
+    const el = document.getElementById(k);
+    if (el) el.value = v;
+  });
+  document.getElementById('algorithm').value = 'sa';
+  rangeBindings.forEach(([id, dispId, fmt]) => {
+    const el = document.getElementById(id);
+    const disp = document.getElementById(dispId);
+    if (el && disp) disp.textContent = fmt(el.value);
+  });
+  document.getElementById('weightEnergyVal').textContent = '0.60';
+  document.getElementById('wEDisp').textContent = '0.60';
+  document.getElementById('wLDisp').textContent = '0.40';
+  updateSummary();
+}
+
+// Load previously saved params if they exist
+const saved = localStorage.getItem('edgeOptParams');
+if (saved) {
+  try {
+    const p = JSON.parse(saved);
+    Object.entries(p).forEach(([k,v]) => {
+      const el = document.getElementById(k);
+      if (el) el.value = v;
+    });
+    rangeBindings.forEach(([id, dispId, fmt]) => {
+      const el = document.getElementById(id);
+      const disp = document.getElementById(dispId);
+      if (el && disp) disp.textContent = fmt(el.value);
+    });
+    const we = parseFloat(p.weightEnergy || 0.6);
+    document.getElementById('weightEnergyVal').textContent = we.toFixed(2);
+    document.getElementById('wEDisp').textContent = we.toFixed(2);
+    document.getElementById('wLDisp').textContent = (1-we).toFixed(2);
+  } catch(e) {}
+}
+updateSummary();
+</script>
+</body>
+</html>

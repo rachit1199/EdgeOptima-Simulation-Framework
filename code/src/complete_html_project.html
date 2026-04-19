@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge-Cloud Optimizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #581c87 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 48px;
+            background: linear-gradient(to right, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #cbd5e1;
+            font-size: 18px;
+        }
+        .header .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .control-panel {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #475569;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+        .btn-secondary {
+            background: #475569;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #64748b;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        select {
+            padding: 12px 16px;
+            background: #475569;
+            border: 1px solid #64748b;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .metric-card {
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid;
+        }
+        .metric-card.blue {
+            background: rgba(37, 99, 235, 0.1);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        .metric-card.purple {
+            background: rgba(124, 58, 237, 0.1);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+        .metric-card.green {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .metric-card.orange {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        .metric-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .metric-unit {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .metric-extra {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .chart-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #475569;
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+        .info-panel {
+            background: linear-gradient(to right, rgba(30, 58, 138, 0.3), rgba(88, 28, 135, 0.3));
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+        .info-panel p {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #475569;
+        }
+        .config-item label {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        .config-item input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #475569;
+            border: 1px solid #64748b;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-left: auto;
+        }
+        .distribution-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 0;
+        }
+        .dist-item {
+            text-align: center;
+        }
+        .dist-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .dist-label {
+            font-size: 16px;
+            color: #cbd5e1;
+        }
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .task-item {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid;
+        }
+        .task-item.pending {
+            background: rgba(234, 179, 8, 0.1);
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+        .task-item.completed {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .task-type {
+            font-weight: 600;
+        }
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #eab308;
+            color: #000;
+        }
+        .status-completed {
+            background: #10b981;
+            color: #000;
+        }
+        .task-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Edge-Cloud Optimizer</h1>
+            <p>Energy-Efficient Task Offloading & Resource Management</p>
+            <p class="subtitle">By Rachit Yadav (RA2311003011471) & Ashray Ahuja (RA2311003011447) | Guide: Mrs. V. Sujatha</p>
+        </div>
+
+        <div class="control-panel">
+            <div class="controls">
+                <button class="btn btn-primary" id="toggleBtn" onclick="toggleSimulation()">
+                    <span id="btnText">▶ Start Simulation</span>
+                </button>
+                <button class="btn btn-secondary" onclick="resetSimulation()">↻ Reset</button>
+                <select id="algorithmSelect" onchange="changeAlgorithm()">
+                    <option value="greedy">🎯 Greedy Algorithm</option>
+                    <option value="simulated-annealing">🔥 Simulated Annealing</option>
+                    <option value="q-learning">🧠 Q-Learning</option>
+                </select>
+                <button class="btn btn-secondary" onclick="toggleConfig()">⚙ Configure</button>
+                <button class="btn btn-success" onclick="exportResults()">💾 Export JSON</button>
+                <button class="btn btn-success" onclick="exportCSV()">📄 Export CSV</button>
+                <div class="status-bar">
+                    <span>Time: <strong id="timeDisplay">0s</strong></span>
+                </div>
+            </div>
+
+            <div id="configPanel" style="display: none;">
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Devices</label>
+                        <input type="number" id="numDevices" value="15" min="1" max="50">
+                    </div>
+                    <div class="config-item">
+                        <label>Edge Servers</label>
+                        <input type="number" id="numEdgeServers" value="4" min="1" max="10">
+                    </div>
+                    <div class="config-item">
+                        <label>Task Generation Rate</label>
+                        <input type="number" id="taskRate" value="3" min="1" max="10">
+                    </div>
+                    <div class="config-item">
+                        <label>Speed (ms)</label>
+                        <input type="number" id="simSpeed" value="100" min="50" max="1000" step="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card blue">
+                <div class="metric-label">⚡ Total Energy</div>
+                <div class="metric-value" id="totalEnergy">0.0</div>
+                <div class="metric-unit">Joules consumed</div>
+                <div class="metric-extra" style="color: #10b981;">💡 Saved: <span id="energySaved">0.0</span>J</div>
+            </div>
+            <div class="metric-card purple">
+                <div class="metric-label">📊 Avg Latency</div>
+                <div class="metric-value" id="avgLatency">0.0</div>
+                <div class="metric-unit">milliseconds</div>
+                <div class="metric-extra" style="color: #f97316;">⚠️ Violations: <span id="violations">0</span></div>
+            </div>
+            <div class="metric-card green">
+                <div class="metric-label">✅ Tasks Completed</div>
+                <div class="metric-value" id="tasksCompleted">0</div>
+                <div class="metric-unit">of <span id="totalTasks">0</span> total</div>
+                <div class="metric-extra" style="color: #ef4444;">❌ Failed: <span id="failedTasks">0</span></div>
+            </div>
+            <div class="metric-card orange">
+                <div class="metric-label">🎯 Success Rate</div>
+                <div class="metric-value" id="successRate">0%</div>
+                <div class="metric-unit">efficiency</div>
+                <div class="metric-extra" style="color: #3b82f6;">📈 QoS: <span id="qos">100</span>%</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">⚡ Energy Consumption Over Time</div>
+                <canvas id="energyChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">🎯 Task Distribution</div>
+                <div class="distribution-chart">
+                    <div class="dist-item">
+                        <div class="dist-circle" style="background: rgba(59, 130, 246, 0.2); border: 3px solid #3b82f6;">
+                            <span id="localCount">0</span>
+                        </div>
+                        <div class="dist-label">Local</div>
+                    </div>
+                    <div class="dist-item">
+                        <div class="dist-circle" style="background: rgba(16, 185, 129, 0.2); border: 3px solid #10b981;">
+                            <span id="edgeCount">0</span>
+                        </div>
+                        <div class="dist-label">Edge</div>
+                    </div>
+                    <div class="dist-item">
+                        <div class="dist-circle" style="background: rgba(139, 92, 246, 0.2); border: 3px solid #8b5cf6;">
+                            <span id="cloudCount">0</span>
+                        </div>
+                        <div class="dist-label">Cloud</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom: 24px;">
+            <div class="chart-title">📋 Recent Tasks</div>
+            <div class="task-list" id="taskList">
+                <p style="text-align: center; color: #94a3b8; padding: 40px;">
+                    No tasks yet. Click "Start Simulation" to begin generating tasks.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <p style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">📚 21CSP302L – Minor Project: Energy-Efficient Task Offloading</p>
+            <p><strong>Students:</strong> Rachit Yadav (RA2311003011471) & Ashray Ahuja (RA2311003011447)</p>
+            <p><strong>Guide:</strong> Mrs. V. Sujatha, Assistant Professor (Jr.G), Department of Computing Technologies</p>
+            <p style="margin-top: 12px;">This simulation demonstrates intelligent task offloading strategies in hybrid edge-cloud environments. The system optimally decides task placement across local devices, edge servers, and cloud datacenters to minimize energy consumption while maintaining Quality of Service (QoS) requirements.</p>
+            <p style="margin-top: 8px; font-size: 12px; color: #94a3b8;"><strong>SDG Alignment:</strong> SDG 7 (Affordable and Clean Energy) | SDG 9 (Industry, Innovation and Infrastructure)</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Simulation State
+        let isRunning = false;
+        let currentTime = 0;
+        let interval = null;
+        let algorithm = 'greedy';
+        
+        let devices = [];
+        let edgeServers = [];
+        let cloudServers = [];
+        let tasks = [];
+        let completedTasks = [];
+        
+        let metrics = {
+            totalEnergy: 0,
+            avgLatency: 0,
+            tasksCompleted: 0,
+            totalTasks: 0,
+            localTasks: 0,
+            edgeTasks: 0,
+            cloudTasks: 0,
+            failedTasks: 0,
+            energySaved: 0,
+            latencyViolations: 0
+        };
+        
+        let energyData = [];
+        let energyChart = null;
+
+        const taskTypes = [
+            { name: 'Video Processing', computeIntensity: 1200, dataSize: 60, latencyReq: 600, priority: 'medium', color: '#ef4444' },
+            { name: 'ML Inference', computeIntensity: 900, dataSize: 25, latencyReq: 350, priority: 'high', color: '#f59e0b' },
+            { name: 'Sensor Analytics', computeIntensity: 150, dataSize: 8, latencyReq: 180, priority: 'high', color: '#10b981' },
+            { name: 'Image Recognition', computeIntensity: 700, dataSize: 35, latencyReq: 450, priority: 'medium', color: '#3b82f6' },
+            { name: 'Data Aggregation', computeIntensity: 120, dataSize: 12, latencyReq: 200, priority: 'low', color: '#8b5cf6' },
+            { name: 'AR/VR Rendering', computeIntensity: 1500, dataSize: 80, latencyReq: 100, priority: 'critical', color: '#ec4899' }
+        ];
+
+        // Initialize
+        function init() {
+            initializeEnvironment();
+            initializeCharts();
+            updateUI();
+        }
+
+        function initializeEnvironment() {
+            const numDevices = parseInt(document.getElementById('numDevices').value);
+            const numEdgeServers = parseInt(document.getElementById('numEdgeServers').value);
+            
+            devices = Array.from({ length: numDevices }, (_, i) => ({
+                id: `dev-${i}`,
+                name: `Device ${i + 1}`,
+                processingPower: 60 + Math.random() * 120,
+                batteryLevel: 75 + Math.random() * 25,
+                energyPerCycle: 0.4 + Math.random() * 0.4,
+                currentLoad: 0,
+                maxLoad: 3,
+                position: { x: Math.random() * 100, y: Math.random() * 100 },
+                totalTasksProcessed: 0
+            }));
+
+            edgeServers = Array.from({ length: numEdgeServers }, (_, i) => ({
+                id: `edge-${i}`,
+                name: `Edge Server ${i + 1}`,
+                processingPower: 600 + Math.random() * 400,
+                energyPerCycle: 1.8 + Math.random() * 1.2,
+                currentLoad: 0,
+                capacity: 12,
+                position: { x: (i + 1) * (100 / (numEdgeServers + 1)), y: 50 },
+                totalTasksProcessed: 0
+            }));
+
+            cloudServers = [{
+                id: 'cloud-1',
+                name: 'Cloud Datacenter',
+                processingPower: 2500,
+                energyPerCycle: 12,
+                currentLoad: 0,
+                capacity: 150,
+                totalTasksProcessed: 0
+            }];
+        }
+
+        function initializeCharts() {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            energyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Energy (J)',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleSimulation() {
+            isRunning = !isRunning;
+            if (isRunning) {
+                document.getElementById('btnText').textContent = '⏸ Pause Simulation';
+                startSimulation();
+            } else {
+                document.getElementById('btnText').textContent = '▶ Start Simulation';
+                if (interval) clearInterval(interval);
+            }
+        }
+
+        function startSimulation() {
+            const speed = parseInt(document.getElementById('simSpeed').value);
+            interval = setInterval(() => {
+                currentTime++;
+                document.getElementById('timeDisplay').textContent = currentTime + 's';
+                
+                const taskRate = parseInt(document.getElementById('taskRate').value);
+                const probability = taskRate / 10;
+                if (Math.random() < probability) {
+                    generateTask();
+                }
+                
+                processTasks();
+                updateUI();
+            }, speed);
+        }
+
+        function resetSimulation() {
+            isRunning = false;
+            currentTime = 0;
+            tasks = [];
+            completedTasks = [];
+            energyData = [];
+            metrics = {
+                totalEnergy: 0,
+                avgLatency: 0,
+                tasksCompleted: 0,
+                totalTasks: 0,
+                localTasks: 0,
+                edgeTasks: 0,
+                cloudTasks: 0,
+                failedTasks: 0,
+                energySaved: 0,
+                latencyViolations: 0
+            };
+            
+            if (interval) clearInterval(interval);
+            document.getElementById('btnText').textContent = '▶ Start Simulation';
+            document.getElementById('timeDisplay').textContent = '0s';
+            
+            initializeEnvironment();
+            energyChart.data.labels = [];
+            energyChart.data.datasets[0].data = [];
+            energyChart.update();
+            updateUI();
+        }
+
+        function generateTask() {
+            const taskType = taskTypes[Math.floor(Math.random() * taskTypes.length)];
+            const sourceDevice = devices[Math.floor(Math.random() * devices.length)];
+            const variability = 0.8 + Math.random() * 0.4;
+            
+            const newTask = {
+                id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                type: taskType.name,
+                computeIntensity: taskType.computeIntensity * variability,
+                dataSize: taskType.dataSize * variability,
+                latencyRequirement: taskType.latencyReq,
+                priority: taskType.priority,
+                color: taskType.color,
+                sourceDevice: sourceDevice.id,
+                status: 'pending',
+                createdAt: currentTime
+            };
+            
+            tasks.push(newTask);
+            metrics.totalTasks++;
+        }
+
+        function calculateDistance(pos1, pos2) {
+            return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+        }
+
+        function calculateEnergy(task, location, resource, device) {
+            const computeEnergy = (task.computeIntensity / resource.processingPower) * resource.energyPerCycle;
+            let transmissionEnergy = 0;
+            
+            if (location === 'edge') {
+                const distance = calculateDistance(device.position, resource.position);
+                transmissionEnergy = task.dataSize * 0.08 * (1 + distance / 100);
+            } else if (location === 'cloud') {
+                transmissionEnergy = task.dataSize * 0.6;
+            }
+            
+            const idleEnergy = location !== 'local' ? device.energyPerCycle * 0.1 : 0;
+            return computeEnergy + transmissionEnergy + idleEnergy;
+        }
+
+        function calculateLatency(task, location, resource, device) {
+            const computeLatency = task.computeIntensity / resource.processingPower;
+            const queueingDelay = resource.currentLoad * 5;
+            let networkLatency = 0;
+            
+            if (location === 'edge') {
+                const distance = calculateDistance(device.position, resource.position);
+                networkLatency = 15 + distance * 0.3 + Math.random() * 20;
+            } else if (location === 'cloud') {
+                networkLatency = 70 + Math.random() * 50;
+            }
+            
+            return computeLatency + networkLatency + queueingDelay;
+        }
+
+        function greedyOffloading(task) {
+            const device = devices.find(d => d.id === task.sourceDevice);
+            const options = [];
+            
+            if (device.currentLoad < device.maxLoad && device.batteryLevel > 10) {
+                const energy = calculateEnergy(task, 'local', device, device);
+                const latency = calculateLatency(task, 'local', device, device);
+                options.push({ location: 'local', resource: device, energy, latency });
+            }
+            
+            edgeServers.forEach(edge => {
+                if (edge.currentLoad < edge.capacity) {
+                    const energy = calculateEnergy(task, 'edge', edge, device);
+                    const latency = calculateLatency(task, 'edge', edge, device);
+                    options.push({ location: 'edge', resource: edge, energy, latency });
+                }
+            });
+            
+            cloudServers.forEach(cloud => {
+                if (cloud.currentLoad < cloud.capacity) {
+                    const energy = calculateEnergy(task, 'cloud', cloud, device);
+                    const latency = calculateLatency(task, 'cloud', cloud, device);
+                    options.push({ location: 'cloud', resource: cloud, energy, latency });
+                }
+            });
+            
+            if (options.length === 0) return null;
+            
+            const feasible = options.filter(o => o.latency <= task.latencyRequirement);
+            const validOptions = feasible.length > 0 ? feasible : options;
+            return validOptions.sort((a, b) => a.energy - b.energy)[0];
+        }
+
+        function processTasks() {
+            const pendingTasks = tasks.filter(t => t.status === 'pending');
+            
+            pendingTasks.forEach(task => {
+                const decision = greedyOffloading(task);
+                
+                if (!decision) {
+                    task.status = 'failed';
+                    metrics.failedTasks++;
+                    return;
+                }
+                
+                task.assignedTo = decision.resource.id;
+                task.location = decision.location;
+                task.energy = decision.energy;
+                task.latency = decision.latency;
+                task.status = 'completed';
+                task.completedAt = currentTime;
+                
+                metrics.totalEnergy += decision.energy;
+                metrics.tasksCompleted++;
+                
+                if (decision.latency > task.latencyRequirement) {
+                    metrics.latencyViolations++;
+                }
+                
+                if (decision.location === 'local') metrics.localTasks++;
+                else if (decision.location === 'edge') metrics.edgeTasks++;
+                else metrics.cloudTasks++;
+                
+                completedTasks.push(task);
+                
+                const device = devices.find(d => d.id === task.sourceDevice);
+                const cloudBaseline = calculateEnergy(task, 'cloud', cloudServers[0], device);
+                metrics.energySaved += (cloudBaseline - decision.energy);
+                
+                const totalLatency = completedTasks.reduce((sum, t) => sum + t.latency, 0);
+                metrics.avgLatency = totalLatency / completedTasks.length;
+                
+                if (decision.location === 'edge') {
+                    decision.resource.currentLoad++;
+                } else if (decision.location === 'cloud') {
+                    decision.resource.currentLoad++;
+                }
+                
+                if (decision.location === 'local') {
+                    device.batteryLevel = Math.max(0, device.batteryLevel - 0.8);
+                }
+            });
+            
+            edgeServers.forEach(e => e.currentLoad = Math.max(0, e.currentLoad - 0.1));
+            cloudServers.forEach(c => c.currentLoad = Math.max(0, c.currentLoad - 0.1));
+            
+            tasks = tasks.filter(t => t.status === 'pending' || (currentTime - t.completedAt < 3));
+        }
+
+        function updateUI() {
+            document.getElementById('totalEnergy').textContent = metrics.totalEnergy.toFixed(1);
+            document.getElementById('energySaved').textContent = metrics.energySaved.toFixed(1);
+            document.getElementById('avgLatency').textContent = metrics.avgLatency.toFixed(1);
+            document.getElementById('violations').textContent = metrics.latencyViolations;
+            document.getElementById('tasksCompleted').textContent = metrics.tasksCompleted;
+            document.getElementById('totalTasks').textContent = metrics.totalTasks;
+            document.getElementById('failedTasks').textContent = metrics.failedTasks;
+            
+            const successRate = metrics.totalTasks > 0 ? (metrics.tasksCompleted / metrics.totalTasks * 100) : 0;
+            document.getElementById('successRate').textContent = successRate.toFixed(1) + '%';
+            
+            const qos = metrics.tasksCompleted > 0 ? (100 - (metrics.latencyViolations / metrics.tasksCompleted * 100)) : 100;
+            document.getElementById('qos').textContent = qos.toFixed(1);
+            
+            document.getElementById('localCount').textContent = metrics.localTasks;
+            document.getElementById('edgeCount').textContent = metrics.edgeTasks;
+            document.getElementById('cloudCount').textContent = metrics.cloudTasks;
+            
+            if (currentTime % 5 === 0) {
+                energyChart.data.labels.push(currentTime);
+                energyChart.data.datasets[0].data.push(metrics.totalEnergy);
+                if (energyChart.data.labels.length > 50) {
+                    energyChart.data.labels.shift();
+                    energyChart.data.datasets[0].data.shift();
+                }
+                energyChart.update('none');
+            }
+            
+            updateTaskList();
+        }
+
+        function updateTaskList() {
+            const taskList = document.getElementById('taskList');
+            const recentTasks = [...tasks, ...completedTasks.slice(-10)].slice(-15);
+            
+            if (recentTasks.length === 0) {
+                taskList.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 40px;">No tasks yet. Click "Start Simulation" to begin generating tasks.</p>';
+                return;
+            }
+            
+            taskList.innerHTML = recentTasks.reverse().map(task => `
+                <div class="task-item ${task.status}">
+                    <div class="task-header">
+                        <span class="task-type">${task.type}</span>
+                        <span class="task-status status-${task.status}">${task.status.toUpperCase()}</span>
+                    </div>
+                    <div class="task-details">
+                        <div><strong>Location:</strong> ${task.location || 'Pending'}</div>
+                        ${task.energy ? `<div><strong>Energy:</strong> ${task.energy.toFixed(2)}J</div>` : ''}
+                        ${task.latency ? `<div><strong>Latency:</strong> ${task.latency.toFixed(1)}ms</div>` : ''}
+                        <div><strong>Required:</strong> ${task.latencyRequirement}ms</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleConfig() {
+            const panel = document.getElementById('configPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function changeAlgorithm() {
+            algorithm = document.getElementById('algorithmSelect').value;
+        }
+
+        function exportResults() {
+            const results = {
+                metadata: {
+                    projectTitle: "Energy-Efficient Task Offloading and Resource Optimization",
+                    students: "Rachit Yadav (RA2311003011471) & Ashray Ahuja (RA2311003011447)",
+                    guide: "Mrs. V. Sujatha",
+                    exportDate: new Date().toISOString(),
+                    simulationDuration: `${currentTime} seconds`,
+                    algorithm: algorithm
+                },
+                performanceMetrics: {
+                    totalEnergyConsumption: `${metrics.totalEnergy.toFixed(2)} Joules`,
+                    averageLatency: `${metrics.avgLatency.toFixed(2)} ms`,
+                    tasksCompleted: metrics.tasksCompleted,
+                    tasksGenerated: metrics.totalTasks,
+                    successRate: `${((metrics.tasksCompleted / metrics.totalTasks) * 100).toFixed(2)}%`,
+                    failedTasks: metrics.failedTasks,
+                    energySavedVsCloud: `${metrics.energySaved.toFixed(2)} Joules`,
+                    latencyViolations: metrics.latencyViolations
+                },
+                taskDistribution: {
+                    local: metrics.localTasks,
+                    edge: metrics.edgeTasks,
+                    cloud: metrics.cloudTasks
+                },
+                sustainabilityImpact: {
+                    sdgAlignment: ["SDG 7: Affordable and Clean Energy", "SDG 9: Industry, Innovation and Infrastructure"],
+                    carbonFootprintReduction: `${(metrics.energySaved * 0.0005).toFixed(2)} kg CO2 saved`,
+                    energyEfficiency: `${((metrics.energySaved / (metrics.totalEnergy + metrics.energySaved)) * 100).toFixed(2)}% improvement`
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `edge-cloud-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportCSV() {
+            const headers = ['Task ID', 'Type', 'Location', 'Energy (J)', 'Latency (ms)', 'Meets Requirement'];
+            const rows = completedTasks.map(task => [
+                task.id,
+                task.type,
+                task.location,
+                task.energy.toFixed(2),
+                task.latency.toFixed(2),
+                task.latency <= task.latencyRequirement ? 'Yes' : 'No'
+            ]);
+            
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `task-data-${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize on page load
+        window.onload = init;
+    </script>
+</body>
+</html>
